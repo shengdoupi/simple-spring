@@ -1,4 +1,4 @@
-package io.github.shengdoupi.ioc;
+package io.github.shengdoupi.springframework.beans;
 
 /**
  * @author zhoukehh
