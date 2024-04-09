@@ -24,4 +24,18 @@ public class ApiTest {
         // 4.测试Bean
         bean.sayHello();
     }
+    
+    @Test
+    public void bean_test_with_args() {
+        // 0.初始化Bean工厂对象
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        // 1.初始化BeanDefinition
+        BeanDefinition beanDefinition = new BeanDefinition(Person.class);
+        // 2.注册BeanDefinition到Bean工厂
+        beanFactory.registerBeanDefinition("person", beanDefinition);
+        // 3.获取Bean
+        Person bean = (Person) beanFactory.getBean("person", "Alice");
+        // 4.测试Bean
+        bean.sayHello();
+    }
 }

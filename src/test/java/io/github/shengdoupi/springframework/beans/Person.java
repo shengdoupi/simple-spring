@@ -7,7 +7,20 @@ package io.github.shengdoupi.springframework.beans;
  */
 public class Person {
     
-    public void sayHello(){
-        System.out.println("hello world");
+    private String name;
+    
+    public Person() {
+    }
+    
+    public Person(String name) {
+        this.name = name;
+    }
+    
+    public void sayHello() {
+        if (null == name) {
+            System.out.println("Hello world");
+        } else {
+            System.out.println("Hello " + name);
+        }
     }
 }

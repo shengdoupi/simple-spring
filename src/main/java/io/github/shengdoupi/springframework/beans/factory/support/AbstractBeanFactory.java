@@ -13,12 +13,21 @@ import io.github.shengdoupi.springframework.beans.factory.support.DefaultSinglet
 public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
     @Override
     public Object getBean(String beanName) throws BeansException{
+        return doGetBean(beanName, null);
+    }
+    
+    @Override
+    public Object getBean(String beanName, Object... args) {
+        return doGetBean(beanName, args);
+    }
+    
+    protected Object doGetBean(String beanName, Object... args) {
         Object bean = getSingleton(beanName);
         if (bean != null) {
             return bean;
         }
         BeanDefinition beanDefinition = getBeanDefinition(beanName);
-        return creatBean(beanName, beanDefinition);
+        return creatBean(beanName, beanDefinition, args);
     }
     
     /**
@@ -36,6 +45,6 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
      * @return Bean object.
      * @throws BeansException
      */
-    protected abstract Object creatBean(String beanName, BeanDefinition beanDefinition) throws BeansException;
+    protected abstract Object creatBean(String beanName, BeanDefinition beanDefinition, Object... args) throws BeansException;
     
 }
