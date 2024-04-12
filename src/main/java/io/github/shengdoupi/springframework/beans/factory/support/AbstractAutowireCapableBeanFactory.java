@@ -1,9 +1,13 @@
 package io.github.shengdoupi.springframework.beans.factory.support;
 
 import io.github.shengdoupi.springframework.beans.BeansException;
+import io.github.shengdoupi.springframework.beans.PropertyValue;
+import io.github.shengdoupi.springframework.beans.PropertyValues;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanDefinition;
+import io.github.shengdoupi.springframework.beans.factory.config.BeanReference;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 
 /**
  * @author zhoukehh
@@ -18,6 +22,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         Object bean = null;
         try {
             bean = createBeanInstance(beanName, beanDefinition, args);
+            applyPropertyValues(beanDefinition, beanName, bean);
         } catch (Exception e) {
             throw new BeansException("Instantiate bean failed.", e);
         }
@@ -53,5 +58,39 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         }
         // Instantiation.
         return instantiationStrategy.instantiate(beanDefinition, beanName, ctorToUse, argsToUse);
+    }
+    
+    protected void applyPropertyValues(BeanDefinition beanDefinition, String beanName, Object bean) {
+        try {
+            PropertyValues propertyValues = beanDefinition.getPropertyValues();
+            if (null == propertyValues) {
+                return;
+            }
+            for (PropertyValue propertyValue : propertyValues.getPropertyValues()) {
+                String name = propertyValue.getName();
+                Object value = propertyValue.getValue();
+                if (value instanceof BeanReference) {
+                    BeanReference beanReference = (BeanReference) propertyValue.getValue();
+                    value = getBean(beanReference.getBeanName());
+                }
+                setFieldValue(beanName, bean, name, value);
+            }
+        } catch (Exception e) {
+            throw new BeansException("Apply property values error", e);
+        }
+        
+    }
+    
+    protected void setFieldValue(String beanName, Object bean, String propertyName, Object propertyValue) {
+        try {
+            Class clazz = getBeanDefinition(beanName).getBeanClass();
+            Field field = clazz.getDeclaredField(propertyName);
+            field.setAccessible(true);
+            field.set(bean, propertyValue);
+        } catch ( NoSuchFieldException | SecurityException e) {
+            throw new BeansException("Reflection get field error " + beanName, e);
+        } catch ( IllegalArgumentException | IllegalAccessException e) {
+            throw new BeansException("Reflection set field value error", e);
+        }
     }
 }
