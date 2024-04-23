@@ -4,6 +4,8 @@ import io.github.shengdoupi.springframework.beans.factory.BeanFactory;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanDefinition;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanReference;
 import io.github.shengdoupi.springframework.beans.factory.support.DefaultListableBeanFactory;
+import io.github.shengdoupi.springframework.beans.factory.support.XmlBeanDefinitionReader;
+import io.github.shengdoupi.springframework.core.io.DefaultResourceLoader;
 import org.junit.Test;
 
 /**
@@ -61,4 +63,20 @@ public class ApiTest {
         UserService userService = (UserService) beanFactory.getBean("userService");
         userService.queryUserInfo("01");
     }
+    
+    @Test
+    public void xml_resource_loader() {
+        // 1.初始化 BeanFactory
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        
+        // 2.读取配置文件&注册Bean
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+        reader.setResourceLoader(new DefaultResourceLoader());
+        reader.loadBeanDefinitions("classpath:spring.xml");
+        
+        // 3.获取Bean对象调用方法
+        UserService userService = (UserService) beanFactory.getBean("userService");
+        userService.queryUserInfo("01");
+    }
+    
 }
