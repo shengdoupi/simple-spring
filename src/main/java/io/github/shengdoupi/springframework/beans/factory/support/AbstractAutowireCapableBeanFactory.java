@@ -3,7 +3,9 @@ package io.github.shengdoupi.springframework.beans.factory.support;
 import io.github.shengdoupi.springframework.beans.BeansException;
 import io.github.shengdoupi.springframework.beans.PropertyValue;
 import io.github.shengdoupi.springframework.beans.PropertyValues;
+import io.github.shengdoupi.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanDefinition;
+import io.github.shengdoupi.springframework.beans.factory.config.BeanPostProcessor;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanReference;
 
 import java.lang.reflect.Constructor;
@@ -14,15 +16,19 @@ import java.lang.reflect.Field;
  * @date 2024/3/26
  * @description Abstract autowire capable bean factory.
  */
-public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory {
+public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowireCapableBeanFactory {
     private InstantiationStrategy instantiationStrategy = new CglibSubclassingInstantiationStrategy();
     
     @Override
     public Object creatBean(String beanName, BeanDefinition beanDefinition, Object... args) throws BeansException {
         Object bean = null;
         try {
+            // 创建Bean实例
             bean = createBeanInstance(beanName, beanDefinition, args);
+            // 属性注入
             applyPropertyValues(beanDefinition, beanName, bean);
+            // 初始化Bean
+            initializeBean(beanName, bean, beanDefinition);
         } catch (Exception e) {
             throw new BeansException("Instantiate bean failed.", e);
         }
@@ -78,7 +84,6 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         } catch (Exception e) {
             throw new BeansException("Apply property values error", e);
         }
-        
     }
     
     protected void setFieldValue(String beanName, Object bean, String propertyName, Object propertyValue) {
@@ -87,10 +92,50 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             Field field = clazz.getDeclaredField(propertyName);
             field.setAccessible(true);
             field.set(bean, propertyValue);
-        } catch ( NoSuchFieldException | SecurityException e) {
+        } catch (NoSuchFieldException | SecurityException e) {
             throw new BeansException("Reflection get field error " + beanName, e);
-        } catch ( IllegalArgumentException | IllegalAccessException e) {
+        } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new BeansException("Reflection set field value error", e);
         }
+    }
+    
+    private Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
+        // 执行初始化前的自定义方法
+        Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
+        // 执行初始化方法
+        invokeInitMethods(beanName, bean, beanDefinition);
+        // 执行初始化后的自定义方法
+        wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
+        return wrappedBean;
+    }
+    
+    protected void invokeInitMethods(String beanName, Object bean, BeanDefinition beanDefinition) throws BeansException {
+    
+    }
+    
+    @Override
+    public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) {
+        Object result = existingBean;
+        for (BeanPostProcessor postProcessor : getBeanPostProcessors()) {
+            Object current = postProcessor.postProcessBeanBeforeInitialization(result, beanName);
+            if (current == null) {
+                return result;
+            }
+            result = current;
+        }
+        return result;
+    }
+    
+    @Override
+    public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName) {
+        Object result = existingBean;
+        for (BeanPostProcessor postProcessor : getBeanPostProcessors()) {
+            Object current = postProcessor.postProcessBeanAfterInitialization(result, beanName);
+            if (current == null) {
+                return result;
+            }
+            result = current;
+        }
+        return result;
     }
 }

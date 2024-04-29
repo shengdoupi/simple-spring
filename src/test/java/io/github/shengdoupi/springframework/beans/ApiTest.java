@@ -5,6 +5,8 @@ import io.github.shengdoupi.springframework.beans.factory.config.BeanDefinition;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanReference;
 import io.github.shengdoupi.springframework.beans.factory.support.DefaultListableBeanFactory;
 import io.github.shengdoupi.springframework.beans.factory.support.XmlBeanDefinitionReader;
+import io.github.shengdoupi.springframework.context.ApplicationContext;
+import io.github.shengdoupi.springframework.context.support.ClassPathXmlApplicationContext;
 import io.github.shengdoupi.springframework.core.io.DefaultResourceLoader;
 import org.junit.Test;
 
@@ -79,4 +81,10 @@ public class ApiTest {
         userService.queryUserInfo("01");
     }
     
+    @Test
+    public void application_context_test() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-application-context.xml");
+        UserService userService = (UserService) applicationContext.getBean("userService");
+        userService.queryUserInfo("01");
+    }
 }

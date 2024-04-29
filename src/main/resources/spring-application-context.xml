@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+
+    <bean id="userDao" class="io.github.shengdoupi.springframework.beans.UserDao"/>
+
+    <bean id="userService" class="io.github.shengdoupi.springframework.beans.UserService">
+
+        <property name="city" value="LA"/>
+        <property name="country" value="USA"/>
+        <property name="userDao" ref="userDao"/>
+    </bean>
+
+    <bean class="io.github.shengdoupi.springframework.beans.common.MyBeanPostProcessor"/>
+    <bean class="io.github.shengdoupi.springframework.beans.common.MyBeanFactoryPostProcessor"/>
+
+</beans>

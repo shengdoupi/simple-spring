@@ -25,4 +25,23 @@ public interface BeanFactory {
      * @throws BeansException
      */
     Object getBean(String beanName, Object... args) throws BeansException;
+    
+    /**
+     * Get bean by required type.
+     * @param beanName
+     * @param requiredType Type the bean must match, can be an interface or superclass.
+     * @return
+     * @param <T>
+     * @throws BeansException
+     */
+    <T> T getBean(String beanName, Class<T> requiredType) throws BeansException;
+    
+    /**
+     * Get bean by required type.
+     * @param requiredType Type the bean must match, can be an interface or superclass.
+     * @return
+     * @param <T>
+     * @throws BeansException
+     */
+    <T> T getBean(Class<T> requiredType) throws BeansException;
 }

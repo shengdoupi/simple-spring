@@ -8,12 +8,39 @@ package io.github.shengdoupi.springframework.beans;
 public class UserService {
     private UserDao userDao;
     
+    private String country;
+    
+    private String city;
+    
     public void queryUserInfo(String userId) {
         printUserInfo(userDao.getUserName(userId));
     }
     
     private void printUserInfo(String userName) {
-        System.out.println("Query user info: " + userName);
+        System.out.println("Query user info: " + userName + getCountry() + getCity());
     }
     
+    public UserDao getUserDao() {
+        return userDao;
+    }
+    
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+    
+    public String getCountry() {
+        return country;
+    }
+    
+    public void setCountry(String country) {
+        this.country = country;
+    }
+    
+    public String getCity() {
+        return city;
+    }
+    
+    public void setCity(String city) {
+        this.city = city;
+    }
 }
