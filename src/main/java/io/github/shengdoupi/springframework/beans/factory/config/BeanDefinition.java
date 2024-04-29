@@ -8,9 +8,27 @@ import io.github.shengdoupi.springframework.beans.PropertyValues;
  * @description Bean definition.
  */
 public class BeanDefinition {
+    /**
+     * Scope identifier for the standard singleton scope
+     */
+    String SCOPE_SINGLETON = "singleton";
+    
+    /**
+     * Scope identifier for the standard prototype scope
+     */
+    String SCOPE_PROTOTYPE = "prototype";
+    
     private Class beanClass;
     
     private PropertyValues propertyValues;
+    
+    private String scope = SCOPE_SINGLETON;
+    
+    private boolean singleton = true;
+    
+    private boolean prototype = false;
+    
+    private boolean lazyInit = false;
     
     public BeanDefinition(Class beanClass) {
         this.beanClass = beanClass;
@@ -35,5 +53,27 @@ public class BeanDefinition {
     
     public void setPropertyValues(PropertyValues propertyValues) {
         this.propertyValues = propertyValues;
+    }
+    
+    public void setScope(String scope) {
+        this.scope = scope;
+        this.singleton = SCOPE_SINGLETON.equals(scope);
+        this.prototype = SCOPE_PROTOTYPE.equals(scope);
+    }
+    
+    public boolean isSingleton() {
+        return this.singleton;
+    }
+    
+    public boolean isPrototype() {
+        return this.prototype;
+    }
+    
+    public boolean isLazyInit() {
+        return this.lazyInit;
+    }
+    
+    public void setLazyInit(boolean lazyInit) {
+        this.lazyInit = lazyInit;
     }
 }

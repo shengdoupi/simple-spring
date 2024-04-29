@@ -8,6 +8,7 @@ import io.github.shengdoupi.springframework.beans.PropertyValues;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanDefinition;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanReference;
 import io.github.shengdoupi.springframework.core.io.Resource;
+import io.github.shengdoupi.springframework.core.io.ResourceLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -24,6 +25,10 @@ import java.io.InputStream;
 public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     public XmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
         super(registry);
+    }
+    
+    public XmlBeanDefinitionReader(BeanDefinitionRegistry registry, ResourceLoader resourceLoader) {
+        super(registry, resourceLoader);
     }
     
     @Override
@@ -47,6 +52,13 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
         Resource resource = getResourceLoader().getResource(location);
         loadBeanDefinitions(resource);
     }
+    @Override
+    public void loadBeanDefinitions(String... locations) throws BeansException {
+        for (String location : locations) {
+            loadBeanDefinitions(location);
+        }
+    }
+    
     
     private void doLoadBeanDefinitions(InputStream inputStream, Resource resource) {
         try {
@@ -70,6 +82,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 Class<?> clazz = Class.forName(className);
                 // beanName
                 String beanName = StringUtils.isNotBlank(id) ? id : name;
+                if (StringUtils.isBlank(beanName)) {
+                    beanName = clazz.getSimpleName();
+                }
                 // BeanDefinition
                 BeanDefinition beanDefinition = new BeanDefinition(clazz);
                 NodeList beanChildNodes = bean.getChildNodes();
