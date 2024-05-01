@@ -3,13 +3,18 @@ package io.github.shengdoupi.springframework.beans.factory.support;
 import io.github.shengdoupi.springframework.beans.BeansException;
 import io.github.shengdoupi.springframework.beans.PropertyValue;
 import io.github.shengdoupi.springframework.beans.PropertyValues;
+import io.github.shengdoupi.springframework.beans.factory.DisposableBean;
+import io.github.shengdoupi.springframework.beans.factory.InitializingBean;
 import io.github.shengdoupi.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanDefinition;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanPostProcessor;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanReference;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * @author zhoukehh
@@ -32,6 +37,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         } catch (Exception e) {
             throw new BeansException("Instantiate bean failed.", e);
         }
+        //
+        registerDisposableBeanIfNecessary(bean, beanDefinition, beanName);
         addSingleton(beanName, bean);
         return bean;
     }
@@ -110,7 +117,25 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
     
     protected void invokeInitMethods(String beanName, Object bean, BeanDefinition beanDefinition) throws BeansException {
-    
+        try {
+            if (bean instanceof InitializingBean) {
+                ((InitializingBean) bean).afterPropertiesSet();
+                return;
+            }
+            if (StringUtils.isBlank(beanDefinition.getInitMethodName())) {
+                return;
+            }
+            String initMethodName = beanDefinition.getInitMethodName();
+            Class clazz = beanDefinition.getBeanClass();
+            Method initMethod = clazz.getDeclaredMethod(initMethodName);
+            if (Objects.isNull(initMethod)) {
+                throw new Exception("Init method:" + initMethodName + "can not find error.");
+            }
+            initMethod.invoke(bean);
+        } catch (Exception e) {
+            throw new BeansException("Init methods invoke error.", e);
+        }
+        
     }
     
     @Override
@@ -137,5 +162,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             result = current;
         }
         return result;
+    }
+    
+    private void registerDisposableBeanIfNecessary(Object bean, BeanDefinition beanDefinition, String beanName) {
+        if (null == bean) {
+            return;
+        }
+        if (bean instanceof DisposableBean || StringUtils.isNotBlank(beanDefinition.getDestroyMethodName())) {
+            registerDisposableBean(beanName, new DisposableBeanAdapter(bean, beanName, beanDefinition));
+        }
     }
 }

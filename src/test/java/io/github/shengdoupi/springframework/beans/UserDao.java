@@ -17,4 +17,12 @@ public class UserDao {
     public String getUserName(String userId) {
         return userInfoCache.get(userId);
     }
+    
+    public void destroyMethod() {
+        System.out.println("UserDao destroy method is invoked");
+    }
+    
+    public void initializeMethod() {
+        System.out.println("UserDao initialize method is invoked");
+    }
 }

@@ -3,7 +3,7 @@ package io.github.shengdoupi.springframework.beans.factory.config;
 /**
  * @author zhoukehh
  * @date 2024/3/26
- * @description
+ * @description Interface that defines a registry for shared instances.
  */
 public interface SingletonBeanRegistry {
     /**
