@@ -17,4 +17,14 @@ public interface ConfigurableApplicationContext extends ApplicationContext {
      * @throws BeansException
      */
     void refresh() throws BeansException;
+    
+    /**
+     * Register a shutdown hook with the JVM runtime, closing this context on JVM shutdown.
+     */
+    void registerShutDownHook();
+    
+    /**
+     * Closing this context, release all the resources or locks that the implementation might hold.
+     */
+    void close();
 }

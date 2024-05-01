@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans>
 
-    <bean id="userDao" class="io.github.shengdoupi.springframework.beans.UserDao"/>
+    <bean id="userDao" class="io.github.shengdoupi.springframework.beans.UserDao" init-method="initializeMethod" destroy-method="destroyMethod"/>
 
     <bean id="userService" class="io.github.shengdoupi.springframework.beans.UserService">
 

@@ -15,4 +15,9 @@ public interface ConfigurableBeanFactory extends BeanFactory {
      * @param beanPostProcessor
      */
     void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
+    
+    /**
+     * Destroy al singleton beans in this bean factory, include inner beans that registered as disposable bean.
+     */
+    void destroySingletons();
 }

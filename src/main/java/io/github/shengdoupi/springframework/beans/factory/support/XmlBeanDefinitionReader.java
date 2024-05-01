@@ -78,6 +78,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 String id = bean.getAttribute("id");
                 String name = bean.getAttribute("name");
                 String className = bean.getAttribute("class");
+                String initMethod = bean.getAttribute("init-method");
+                String destroyMethod = bean.getAttribute("destroy-method");
                 // get clazz
                 Class<?> clazz = Class.forName(className);
                 // beanName
@@ -90,6 +92,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 NodeList beanChildNodes = bean.getChildNodes();
                 PropertyValues propertyValues = new PropertyValues();
                 beanDefinition.setPropertyValues(propertyValues);
+                beanDefinition.setInitMethodName(initMethod);
+                beanDefinition.setDestroyMethodName(destroyMethod);
                 for (int j = 0; j < beanChildNodes.getLength(); ++j) {
                     if (!(beanChildNodes.item(j) instanceof Element)) {
                         continue;

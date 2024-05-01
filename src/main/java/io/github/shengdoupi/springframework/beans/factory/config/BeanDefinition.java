@@ -20,6 +20,10 @@ public class BeanDefinition {
     
     private Class beanClass;
     
+    private String initMethodName;
+    
+    private String destroyMethodName;
+    
     private PropertyValues propertyValues;
     
     private String scope = SCOPE_SINGLETON;
@@ -75,5 +79,21 @@ public class BeanDefinition {
     
     public void setLazyInit(boolean lazyInit) {
         this.lazyInit = lazyInit;
+    }
+    
+    public String getInitMethodName() {
+        return initMethodName;
+    }
+    
+    public void setInitMethodName(String initMethodName) {
+        this.initMethodName = initMethodName;
+    }
+    
+    public String getDestroyMethodName() {
+        return destroyMethodName;
+    }
+    
+    public void setDestroyMethodName(String destroyMethodName) {
+        this.destroyMethodName = destroyMethodName;
     }
 }
