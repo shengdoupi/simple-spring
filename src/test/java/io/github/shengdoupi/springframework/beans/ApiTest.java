@@ -95,4 +95,16 @@ public class ApiTest {
         UserService userService = (UserService) applicationContext.getBean("userService");
         userService.queryUserInfo("01");
     }
+    
+    @Test
+    public void aware_test() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-application-context.xml");
+        applicationContext.registerShutDownHook();
+        UserService userService = (UserService) applicationContext.getBean("userService");
+        userService.queryUserInfo("01");
+        System.out.println("ClassLoader: " + userService.getClassLoader());
+        System.out.println("BeanFactory: " + userService.getBeanFactory());
+        System.out.println("BeanName: " + userService.getBeanName());
+        System.out.println("ApplicationContext: " + userService.getApplicationContext());
+    }
 }

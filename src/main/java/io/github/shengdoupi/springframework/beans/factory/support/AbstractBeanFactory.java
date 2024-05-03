@@ -20,6 +20,8 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
     
     private final List<BeanPostProcessor> beanPostProcessorList = new ArrayList<>();
     
+    private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+    
     @Override
     public Object getBean(String beanName) throws BeansException {
         return doGetBean(beanName, null,null);
@@ -81,6 +83,10 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
     public void addBeanPostProcessor(BeanPostProcessor postProcessor) {
         this.beanPostProcessorList.remove(postProcessor);
         this.beanPostProcessorList.add(postProcessor);
+    }
+    
+    public ClassLoader getClassLoader() {
+        return this.classLoader;
     }
     
     public List<BeanPostProcessor> getBeanPostProcessors() {
