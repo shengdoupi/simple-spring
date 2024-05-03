@@ -3,6 +3,10 @@ package io.github.shengdoupi.springframework.beans.factory.support;
 import io.github.shengdoupi.springframework.beans.BeansException;
 import io.github.shengdoupi.springframework.beans.PropertyValue;
 import io.github.shengdoupi.springframework.beans.PropertyValues;
+import io.github.shengdoupi.springframework.beans.factory.Aware;
+import io.github.shengdoupi.springframework.beans.factory.BeanClassLoaderAware;
+import io.github.shengdoupi.springframework.beans.factory.BeanFactoryAware;
+import io.github.shengdoupi.springframework.beans.factory.BeanNameAware;
 import io.github.shengdoupi.springframework.beans.factory.DisposableBean;
 import io.github.shengdoupi.springframework.beans.factory.InitializingBean;
 import io.github.shengdoupi.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -107,6 +111,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
     
     private Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
+        
+        if (bean instanceof Aware) {
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware) bean).setBeanName(beanName);
+            }
+            if (bean instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) bean).setBeanFactory(this);
+            }
+            if (bean instanceof BeanClassLoaderAware) {
+                ((BeanClassLoaderAware) bean).setBeanClassLoader(super.getClassLoader());
+            }
+        }
+        
         // 执行初始化前的自定义方法
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
         // 执行初始化方法
