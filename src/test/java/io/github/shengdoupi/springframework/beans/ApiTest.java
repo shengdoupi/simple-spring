@@ -107,4 +107,23 @@ public class ApiTest {
         System.out.println("BeanName: " + userService.getBeanName());
         System.out.println("ApplicationContext: " + userService.getApplicationContext());
     }
+    
+    @Test
+    public void scope_test() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-factory-bean.xml");
+        applicationContext.registerShutDownHook();
+        // switch scope from singleton to prototype
+        UserService userService1 = (UserService) applicationContext.getBean("userService");
+        UserService userService2 = (UserService) applicationContext.getBean("userService");
+        System.out.println(userService1.hashCode());
+        System.out.println(userService2.hashCode());
+    }
+    
+    @Test
+    public void factory_bean_test() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-factory-bean.xml");
+        applicationContext.registerShutDownHook();
+        UserService userService = (UserService) applicationContext.getBean("userService");
+        userService.queryUserInfo("01");
+    }
 }

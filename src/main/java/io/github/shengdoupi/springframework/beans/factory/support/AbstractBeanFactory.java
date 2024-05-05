@@ -2,6 +2,7 @@ package io.github.shengdoupi.springframework.beans.factory.support;
 
 import io.github.shengdoupi.springframework.beans.BeansException;
 import io.github.shengdoupi.springframework.beans.factory.BeanFactory;
+import io.github.shengdoupi.springframework.beans.factory.FactoryBean;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanDefinition;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanPostProcessor;
 import io.github.shengdoupi.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -15,7 +16,7 @@ import java.util.List;
  * @date 2024/3/26
  * @description
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport
         implements BeanFactory, ConfigurableBeanFactory {
     
     private final List<BeanPostProcessor> beanPostProcessorList = new ArrayList<>();
@@ -24,7 +25,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
     
     @Override
     public Object getBean(String beanName) throws BeansException {
-        return doGetBean(beanName, null,null);
+        return doGetBean(beanName, null, null);
     }
     
     @Override
@@ -44,16 +45,29 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry
             BeanDefinition beanDefinition = getBeanDefinition(beanName);
             bean = creatBean(beanName, beanDefinition, args);
         }
-        return adaptBeanInstance(beanName, bean, requiredType);
+        return getObjectForBeanInstance(beanName, bean, requiredType);
+    }
+    
+    protected <T> T getObjectForBeanInstance(String beanName, Object bean, Class<T> requiredType) {
+        if (!(bean instanceof FactoryBean)) {
+            return adaptBeanInstance(beanName, bean, requiredType);
+        }
+        Object object = getCachedObjectForFactoryBean(beanName);
+        if (null == object) {
+            FactoryBean<?> factoryBean = (FactoryBean<?>) bean;
+            object = getObjectFromFactoryBean(beanName, factoryBean);
+        }
+        return (T) object;
     }
     
     /**
      * todo realize
+     *
      * @param beanName
      * @param beanInstance
      * @param requiredType
-     * @return
      * @param <T>
+     * @return
      */
     <T> T adaptBeanInstance(String beanName, Object beanInstance, Class<T> requiredType) {
         return (T) beanInstance;

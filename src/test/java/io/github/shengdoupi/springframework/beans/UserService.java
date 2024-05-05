@@ -30,12 +30,14 @@ public class UserService implements DisposableBean, InitializingBean, BeanNameAw
     
     private ApplicationContext applicationContext;
     
+    private IUserDao iUserDao;
+    
     public void queryUserInfo(String userId) {
-        printUserInfo(userDao.getUserName(userId));
+        printUserInfo(iUserDao.queryUserInfo(userId));
     }
     
     private void printUserInfo(String userName) {
-        System.out.println("Query user info: " + userName + getCountry() + getCity());
+        System.out.println("Query user info: " + userName + " " + getCountry() + " " + getCity());
     }
     
     public UserDao getUserDao() {
