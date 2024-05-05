@@ -80,6 +80,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 String className = bean.getAttribute("class");
                 String initMethod = bean.getAttribute("init-method");
                 String destroyMethod = bean.getAttribute("destroy-method");
+                String scope = bean.getAttribute("scope");
                 // get clazz
                 Class<?> clazz = Class.forName(className);
                 // beanName
@@ -108,6 +109,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
                     String attrRef = property.getAttribute("ref");
                     Object value = StringUtils.isNotBlank(attrRef) ? (BeanReference) () -> attrRef : attrValue;
                     propertyValues.addPropertyValue(new PropertyValue(attrName, value));
+                }
+                if (StringUtils.isNotBlank(scope)) {
+                    beanDefinition.setScope(scope);
                 }
                 if (getRegistry().containsBeanDefinition(beanName)) {
                     throw new BeansException("Duplicate bean name: " + beanName);
