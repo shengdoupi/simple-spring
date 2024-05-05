@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+
+    <bean id="userDao" class="io.github.shengdoupi.springframework.beans.UserDao"/>
+    <bean id="proxyUserDao" class="io.github.shengdoupi.springframework.beans.ProxyBeanFactory"/>
+    <bean id="userService" class="io.github.shengdoupi.springframework.beans.UserService" scope="prototype">
+
+        <property name="city" value="LA"/>
+        <property name="country" value="USA"/>
+        <property name="userDao" ref="userDao"/>
+        <property name="iUserDao" ref="proxyUserDao"/>
+    </bean>
+
+
+</beans>
