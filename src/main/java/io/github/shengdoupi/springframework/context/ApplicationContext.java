@@ -12,5 +12,5 @@ import io.github.shengdoupi.springframework.core.io.ResourceLoader;
  * 1. Bean factory methods for accessing application components.
  * 2. The ability to load file resources.
  */
-public interface ApplicationContext extends ListableBeanFactory, HierarchicalBeanFactory, ResourceLoader {
+public interface ApplicationContext extends ListableBeanFactory, HierarchicalBeanFactory, ResourceLoader, ApplicationEventPublisher {
 }

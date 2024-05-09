@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+
+    <bean class="io.github.shengdoupi.springframework.event.CustomEventListener"/>
+    <bean class="io.github.shengdoupi.springframework.event.ContextRefreshedEventListener"/>
+    <bean class="io.github.shengdoupi.springframework.event.ContextClosedEventListener"/>
+
+</beans>
