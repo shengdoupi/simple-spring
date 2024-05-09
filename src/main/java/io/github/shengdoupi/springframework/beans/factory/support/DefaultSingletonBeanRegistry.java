@@ -48,4 +48,9 @@ public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
             throw new BeansException("Destroy singletons error", e);
         }
     }
+    
+    @Override
+    public void registerSingleton(String beanName, Object singletonObject) {
+        singletonObjects.put(beanName, singletonObject);
+    }
 }

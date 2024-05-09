@@ -26,7 +26,7 @@ import java.util.Objects;
  * @description Abstract autowire capable bean factory.
  */
 public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowireCapableBeanFactory {
-    private InstantiationStrategy instantiationStrategy = new CglibSubclassingInstantiationStrategy();
+    private InstantiationStrategy instantiationStrategy = new SimpleInstantiationStrategy();
     
     @Override
     public Object creatBean(String beanName, BeanDefinition beanDefinition, Object... args) throws BeansException {
