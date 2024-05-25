@@ -129,7 +129,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // 执行初始化前的自定义方法
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
         // 执行初始化方法
-        invokeInitMethods(beanName, bean, beanDefinition);
+        invokeInitMethods(beanName, wrappedBean, beanDefinition);
         // 执行初始化后的自定义方法
         wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
         return wrappedBean;
