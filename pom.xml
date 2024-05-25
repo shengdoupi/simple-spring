@@ -33,6 +33,20 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version> <!-- 请使用最新的版本号 -->
         </dependency>
+
+        <!-- 添加aspectj -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.6</version> <!-- 使用最新的稳定版本 -->
+        </dependency>
+
+        <!-- 添加AOP联盟依赖 -->
+        <dependency>
+            <groupId>aopalliance</groupId>
+            <artifactId>aopalliance</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
 </project>
