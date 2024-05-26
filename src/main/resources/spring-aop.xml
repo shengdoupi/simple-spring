@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans>
+    <!-- InstantiationAwareBeanPostProcessor bean-->
+    <bean class="io.github.shengdoupi.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+    <!-- Target bean -->
+    <bean id="userService" class="io.github.shengdoupi.springframework.aop.IUserService"/>
+    <!-- Before advice -->
+    <bean id="userServiceBeforeAdvice" class="io.github.shengdoupi.springframework.aop.UserServiceBeforeAdvice"/>
+    <!-- MethodInterceptor adapter -->
+    <bean id="methodBeforeAdviceInterceptor" class="io.github.shengdoupi.springframework.aop.framework.adapter.MethodBeforeAdviceInterceptor">
+        <property name="methodBeforeAdvice" ref="userServiceBeforeAdvice"/>
+    </bean>
+    <!-- PointcutAdvisor bean -->
+    <bean id="userServiceAspectJPointcutAdvisor" class="io.github.shengdoupi.springframework.aop.aspectj.AspectJPointcutAdvisor">
+        <property name="expression" value="execution(* io.github.shengdoupi.springframework.aop.IUserService.*(..))"/>
+        <property name="advice" ref="methodBeforeAdviceInterceptor"/>
+    </bean>
+</beans>

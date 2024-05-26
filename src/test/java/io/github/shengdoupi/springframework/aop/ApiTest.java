@@ -4,6 +4,11 @@ import io.github.shengdoupi.springframework.aop.aspectj.AspectJExpressionPointcu
 import io.github.shengdoupi.springframework.aop.aspectj.AspectJPointcutAdvisor;
 import io.github.shengdoupi.springframework.aop.framework.AdvisedSupport;
 import io.github.shengdoupi.springframework.aop.framework.JdkDynamicAopProxy;
+import io.github.shengdoupi.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import io.github.shengdoupi.springframework.beans.factory.support.DefaultListableBeanFactory;
+import io.github.shengdoupi.springframework.context.ApplicationContext;
+import io.github.shengdoupi.springframework.context.support.AbstractXmlApplicationContext;
+import io.github.shengdoupi.springframework.context.support.ClassPathXmlApplicationContext;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,10 +28,10 @@ public class ApiTest {
     public void setup(){
         advisedSupport = new AdvisedSupport();
         // 定义切面
-        Pointcut pointcut = new AspectJExpressionPointcut("execution(* io.github.shengdoupi.springframework.aop.UserService.*(..))");
+        String expression = "execution(* io.github.shengdoupi.springframework.aop.UserService.*(..))";
         // 定义拦截逻辑
         UserServiceInterceptor interceptor = new UserServiceInterceptor();
-        PointcutAdvisor pointcutAdvisor = new AspectJPointcutAdvisor(pointcut, interceptor);
+        PointcutAdvisor pointcutAdvisor = new AspectJPointcutAdvisor(expression, interceptor);
         List<Object> advisors = new ArrayList<>();
         advisors.add(pointcutAdvisor);
         advisedSupport.setAdvisors(advisors);
@@ -41,5 +46,12 @@ public class ApiTest {
         UserService proxy = (UserService) new JdkDynamicAopProxy(advisedSupport).getProxy();
         // 执行代理对象的方法
         proxy.queryUserInfo();
+    }
+    
+    @Test
+    public void aop_with_bean() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:spring-aop.xml");
+        UserService userService = (UserService) applicationContext.getBean("userService");
+        userService.queryUserInfo();
     }
 }

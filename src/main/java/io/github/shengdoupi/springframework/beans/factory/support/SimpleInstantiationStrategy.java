@@ -2,6 +2,7 @@ package io.github.shengdoupi.springframework.beans.factory.support;
 
 import io.github.shengdoupi.springframework.beans.BeansException;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanDefinition;
+import javafx.util.Pair;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -15,6 +16,13 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
     
     @Override
     public Object instantiate(BeanDefinition beanDefinition, String beanName, Constructor<?> ctor, Object... args) {
+        try {
+            if (null == ctor) {
+                ctor = beanDefinition.getBeanClass().getDeclaredConstructor();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return instantiateClass(ctor, args);
     }
     

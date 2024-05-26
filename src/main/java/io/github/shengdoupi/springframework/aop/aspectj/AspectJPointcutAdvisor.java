@@ -10,12 +10,17 @@ import org.aopalliance.aop.Advice;
  * @description A class realized PointcutAdvisor.
  */
 public class AspectJPointcutAdvisor implements PointcutAdvisor {
+    
+    private String expression;
+    
     private Pointcut pointcut;
     
     private Advice advice;
     
-    public AspectJPointcutAdvisor(Pointcut pointcut, Advice advice) {
-        this.pointcut = pointcut;
+    public AspectJPointcutAdvisor() {}
+    
+    public AspectJPointcutAdvisor(String expression, Advice advice) {
+        this.expression = expression;
         this.advice = advice;
     }
     
@@ -26,6 +31,13 @@ public class AspectJPointcutAdvisor implements PointcutAdvisor {
     
     @Override
     public Pointcut getPointcut() {
+        if (pointcut == null) {
+            pointcut = new AspectJExpressionPointcut(expression);
+        }
         return pointcut;
+    }
+    
+    public void setAdvice(Advice advice) {
+        this.advice = advice;
     }
 }
