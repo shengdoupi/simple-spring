@@ -34,6 +34,11 @@ public class AdvisedSupport {
      */
     private AdvisorChainFactory advisorChainFactory = new DefaultAdvisorChainFactory();
     
+    /**
+     * Use cglib proxy.
+     */
+    private boolean proxyTargetClass = true;
+    
     public MethodMatcher getMethodMatcher() {
         return methodMatcher;
     }
@@ -64,6 +69,14 @@ public class AdvisedSupport {
     
     public void setAdvisorChainFactory(AdvisorChainFactory advisorChainFactory) {
         this.advisorChainFactory = advisorChainFactory;
+    }
+    
+    public boolean isProxyTargetClass() {
+        return proxyTargetClass;
+    }
+    
+    public void setProxyTargetClass(boolean proxyTargetClass) {
+        this.proxyTargetClass = proxyTargetClass;
     }
     
     /**

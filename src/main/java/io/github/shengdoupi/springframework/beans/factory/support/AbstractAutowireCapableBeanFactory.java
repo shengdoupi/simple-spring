@@ -13,11 +13,13 @@ import io.github.shengdoupi.springframework.beans.factory.config.AutowireCapable
 import io.github.shengdoupi.springframework.beans.factory.config.BeanDefinition;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanPostProcessor;
 import io.github.shengdoupi.springframework.beans.factory.config.BeanReference;
+import io.github.shengdoupi.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -32,6 +34,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     public Object creatBean(String beanName, BeanDefinition beanDefinition, Object... args) throws BeansException {
         Object bean = null;
         try {
+            // 是否返回代理对象
+            bean = resolveBeforeInstantiation(beanDefinition, beanName);
+            if (bean != null) {
+                return bean;
+            }
             // 创建Bean实例
             bean = createBeanInstance(beanName, beanDefinition, args);
             // 属性注入
@@ -45,6 +52,48 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         registerDisposableBeanIfNecessary(bean, beanDefinition, beanName);
         if (beanDefinition.isSingleton()) {
             addSingleton(beanName, bean);
+        }
+        return bean;
+    }
+    
+    /**
+     * Apply before-instantiation post-processors.
+     * @param beanDefinition
+     * @param beanName
+     * @return
+     */
+    private Object resolveBeforeInstantiation(BeanDefinition beanDefinition, String beanName) {
+        Object bean = applyBeanPostProcessorBeforeInstantiation(beanDefinition, beanName);
+        if (bean != null) {
+            bean = applyBeanPostProcessorAfterInstantiation(bean, beanName);
+        }
+        return bean;
+    }
+    
+    /**
+     * Apply InstantiationAwareBeanPostProcessor to the specified bean definition.
+     * @param beanDefinition
+     * @param beanName
+     * @return
+     */
+    private Object applyBeanPostProcessorBeforeInstantiation(BeanDefinition beanDefinition, String beanName) {
+        Class<?> beanClass = beanDefinition.getBeanClass();
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                Object bean = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessBeforeInstantiation(beanClass, beanName);
+                if (bean != null) {
+                    return bean;
+                }
+            }
+        }
+        return null;
+    }
+    
+    private Object applyBeanPostProcessorAfterInstantiation(Object bean, String beanName) {
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                bean = ((InstantiationAwareBeanPostProcessor) beanPostProcessor).postProcessAfterInstantiation(bean, beanName);
+            }
         }
         return bean;
     }
